@@ -2,12 +2,19 @@
 #include <stdlib.h>
 #include <time.h>
 
+ //(compararações e movimentações)
+
+
 long long comps = 0;  
 long long moves = 0;  
+
 
 #define COMP() (comps++)
 #define MOVE() (moves++)
 #define SWAP() (moves++)
+
+
+ //Função auxiliar para troca
 
 void swap(int *a, int *b) {
     int temp = *a;
@@ -15,6 +22,9 @@ void swap(int *a, int *b) {
     *b = temp;
     SWAP();
 }
+
+
+//Insertion Sort
 
 void insertionSort(int arr[], int n) {
     comps = moves = 0;
@@ -38,6 +48,9 @@ void insertionSort(int arr[], int n) {
         MOVE();
     }
 }
+
+
+//Merge Sort
 
 void merge(int arr[], int l, int m, int r) {
     int n1 = m - l + 1;
@@ -70,6 +83,9 @@ void mergeSort(int arr[], int l, int r) {
     }
 }
 
+
+//Quick Sort
+
 int partitionQS(int arr[], int low, int high) {
     int pivot = arr[high];
     MOVE();
@@ -95,6 +111,10 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
+
+
+/Função que executa o teste e imprime CSV
+
 void executarTeste(char *caso, char *metodoNome, int metodo, int *orig, int N) {
     int *arr = malloc(N * sizeof(int));
     for (int i = 0; i < N; i++) arr[i] = orig[i];
@@ -116,6 +136,10 @@ void executarTeste(char *caso, char *metodoNome, int metodo, int *orig, int N) {
 
     free(arr);
 }
+
+
+ //Main
+
 int main() {
     srand(45473374);
 
