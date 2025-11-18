@@ -1,0 +1,40 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+long long comps = 0;  
+long long moves = 0;  
+
+#define COMP() (comps++)
+#define MOVE() (moves++)
+#define SWAP() (moves++)
+
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    SWAP();
+}
+
+void insertionSort(int arr[], int n) {
+    comps = moves = 0;
+
+    for (int i = 1; i < n; i++) {
+        int key = arr[i]; 
+        MOVE();  
+
+        int j = i - 1;
+
+        while (j >= 0) {
+            COMP();
+            if (arr[j] > key) {
+                arr[j + 1] = arr[j];
+                MOVE();
+                j--;
+            } else break;
+        }
+
+        arr[j + 1] = key;
+        MOVE();
+    }
+}
