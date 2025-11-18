@@ -1,0 +1,171 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+  //CONTADORES GLOBAIS
+
+long long comps = 0;  
+long long moves = 0;  
+
+/* Macros para facilitar contagem */
+#define COMP() (comps++)
+#define MOVE() (moves++)
+#define SWAP() (moves++)
+
+
+   //FUNÇÃO AUXILIAR PARA TROCA
+   
+void swap(int *a, int *b) {
+    int temp = *a;
+    *a = *b;
+    *b = temp;
+    SWAP();
+}
+
+
+   //INSERTION SORT
+  
+void insertionSort(int arr[], int n) {
+    comps = moves = 0;
+
+    for (int i = 1; i < n; i++) {
+        int key = arr[i]; 
+        MOVE();  
+
+        int j = i - 1;
+
+        while (j >= 0) {
+            COMP();
+            if (arr[j] > key) {
+                arr[j + 1] = arr[j];
+                MOVE();
+                j--;
+            } else break;
+        }
+
+        arr[j + 1] = key;
+        MOVE();
+    }
+}
+
+
+  // MERGE SORT
+  
+void merge(int arr[], int l, int m, int r) {
+    int n1 = m - l + 1;
+    int n2 = r - m;
+
+    int L[n1], R[n2];
+
+    for (int i = 0; i < n1; i++) { L[i] = arr[l + i]; MOVE(); }
+    for (int i = 0; i < n2; i++) { R[i] = arr[m + 1 + i]; MOVE(); }
+
+    int i = 0, j = 0, k = l;
+
+    while (i < n1 && j < n2) {
+        COMP();
+        if (L[i] <= R[j]) { arr[k++] = L[i++]; MOVE(); }
+        else { arr[k++] = R[j++]; MOVE(); }
+    }
+
+    while (i < n1) { arr[k++] = L[i++]; MOVE(); }
+    while (j < n2) { arr[k++] = R[j++]; MOVE(); }
+}
+
+void mergeSort(int arr[], int l, int r) {
+    if (l < r) {
+        COMP(); 
+        int m = l + (r - l) / 2;
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+        merge(arr, l, m, r);
+    }
+}
+
+
+  // QUICK SORT
+   
+int partitionQS(int arr[], int low, int high) {
+    int pivot = arr[high];
+    MOVE();
+    int i = low - 1;
+
+    for (int j = low; j < high; j++) {
+        COMP();
+        if (arr[j] < pivot) {
+            i++;
+            swap(&arr[i], &arr[j]);
+        }
+    }
+    swap(&arr[i + 1], &arr[high]);
+    return i + 1;
+}
+
+void quickSort(int arr[], int low, int high) {
+    if (low < high) {
+        COMP();
+
+        int pi = partitionQS(arr, low, high);
+        quickSort(arr, low, pi - 1);
+        quickSort(arr, pi + 1, high);
+    }
+}
+
+
+  // FUNÇÃO PARA EXECUTAR TESTE E IMPRIMIR CSV
+   
+void executarTeste(char *caso, char *metodoNome, int metodo, int *orig, int N) {
+    int *arr = malloc(N * sizeof(int));
+    for (int i = 0; i < N; i++) arr[i] = orig[i];
+
+    clock_t t;
+    comps = moves = 0;
+
+    t = clock();
+
+    if (metodo == 1)        insertionSort(arr, N);
+    else if (metodo == 2)   mergeSort(arr, 0, N - 1);
+    else if (metodo == 3)   quickSort(arr, 0, N - 1);
+
+    t = clock() - t;
+    double tempo = (t * 1000.0) / CLOCKS_PER_SEC;
+
+    printf("%s,%s,%d,%lld,%lld,%.3lf\n",
+           metodoNome, caso, N, comps, moves, tempo);
+
+    free(arr);
+}
+
+
+  // MAIN
+   
+int main() {
+    srand(45473374);
+
+    printf("Metodo,Caso,N,Comparacoes,Trocas,Tempo_ms\n");
+
+    int rgm[] = {4,5,4,7,3,3,7,4};
+    int nRGM = 8;
+
+  
+    executarTeste("rgm", "Merge",     2, rgm, nRGM);
+    executarTeste("rgm", "Quick",     3, rgm, nRGM);
+
+    int tamanhos[] = {100, 1000, 10000};
+
+    for (int i = 0; i < 3; i++) {
+        int N = tamanhos[i];
+        int *vet = malloc(N * sizeof(int));
+
+        for (int j = 0; j < N; j++)
+            vet[j] = rand() % 100000;
+
+       
+        executarTeste("aleatorio", "Merge",     2, vet, N);
+        executarTeste("aleatorio", "Quick",     3, vet, N);
+
+        free(vet);
+    }
+
+    return 0;
+}
