@@ -113,7 +113,7 @@ void quickSort(int arr[], int low, int high) {
 
 
 
-/Função que executa o teste e imprime CSV
+//Função que executa o teste e imprime CSV
 
 void executarTeste(char *caso, char *metodoNome, int metodo, int *orig, int N) {
     int *arr = malloc(N * sizeof(int));
